@@ -63,8 +63,15 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {errors.password && <p role="alert" className="mt-1 text-sm text-red">{errors.password.message}</p>}
       </div>
       {msg && <p role="status" className="text-sm">{msg}</p>}
-      <button disabled={isSubmitting} className="btn btn-gold w-full">{mode === "login" ? "Log in" : "Sign up"}</button>
+      <button disabled={isSubmitting} className="btn btn-gold w-full">{mode === "login" ? "Log in" : "Register"}</button>
       <button type="button" onClick={google} className="btn btn-outline w-full">Continue with Google</button>
+      <p className="text-center text-sm">
+        {mode === "login" ? (
+          <>New to Pearl Scholars? <a href={`/signup?next=${encodeURIComponent(next)}`} className="font-bold underline">Register</a></>
+        ) : (
+          <>Already have an account? <a href={`/login?next=${encodeURIComponent(next)}`} className="font-bold underline">Log in</a></>
+        )}
+      </p>
     </form>
   );
 }

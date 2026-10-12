@@ -15,7 +15,7 @@ export default function Header() {
           <ul className="hidden gap-5 md:flex">
             {nav.map((n) => (<li key={n.href}><Link href={n.href} className="hover:underline">{n.label}</Link></li>))}
           </ul>
-          <Suspense fallback={<span className="btn btn-gold" aria-hidden>Log in</span>}>
+          <Suspense fallback={<span className="btn btn-gold px-4" aria-hidden>Register</span>}>
             <AuthLink />
           </Suspense>
         </nav>
