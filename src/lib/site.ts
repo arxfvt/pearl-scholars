@@ -1,7 +1,7 @@
 /** Absolute site URL. Tolerates a missing scheme or trailing slash, falls back to Netlify's own URL, then localhost. */
 function resolveSiteUrl(): string {
   for (const raw of [process.env.NEXT_PUBLIC_SITE_URL, process.env.URL]) {
-    const v = raw?.trim();
+    const v = raw?.trim().replace(/^[A-Z_]+=/, ""); // tolerate "KEY=value" pasted into the value box
     if (!v) continue;
     try {
       return new URL(/^https?:\/\//.test(v) ? v : `https://${v}`).origin;
