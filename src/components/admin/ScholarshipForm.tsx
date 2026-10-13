@@ -62,7 +62,7 @@ export default function ScholarshipForm({ id, initial, coverUrl }: { id: string 
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); submit(v.status); }} className="space-y-6" noValidate>
+    <form method="post" onSubmit={(e) => { e.preventDefault(); submit(v.status); }} className="space-y-6" noValidate>
       {formError && <p role="alert" className="rounded border border-red bg-surface p-3 text-sm text-red">{formError}</p>}
 
       <section className="card space-y-4 p-5">

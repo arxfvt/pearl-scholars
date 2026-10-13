@@ -25,7 +25,7 @@ export default function SettingsForm({ initial }: { initial: Values }) {
   }
 
   return (
-    <form onSubmit={save} className="space-y-6" noValidate>
+    <form method="post" onSubmit={save} className="space-y-6" noValidate>
       {groups.map((g) => (
         <section key={g.title} className="card space-y-4 p-5">
           <h2 className="text-lg">{g.title}</h2>

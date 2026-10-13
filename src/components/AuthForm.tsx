@@ -43,7 +43,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="card mx-auto max-w-md space-y-4 p-6" noValidate>
+    <form method="post" onSubmit={handleSubmit(onSubmit)} className="card mx-auto max-w-md space-y-4 p-6" noValidate>
       <h1 className="text-2xl">{mode === "login" ? "Log in" : "Create your account"}</h1>
       {mode === "signup" && (
         <div>

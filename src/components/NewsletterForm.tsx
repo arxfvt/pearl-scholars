@@ -18,7 +18,7 @@ export default function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-2" aria-label="Newsletter">
+    <form method="post" onSubmit={onSubmit} className="space-y-2" aria-label="Newsletter">
       <label htmlFor="nl" className="text-sm font-medium">Get new scholarships by email</label>
       <div className="flex gap-2">
         <input id="nl" name="email" type="email" required autoComplete="email" placeholder="you@example.com" className="input text-ink" />

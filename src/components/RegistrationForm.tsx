@@ -80,7 +80,7 @@ export default function RegistrationForm({ scholarshipId, slug, defaults }: { sc
   const err = (k: keyof Fields) => errors[k] && <p role="alert" className="mt-1 text-sm text-red">{errors[k]!.message as string}</p>;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="card space-y-5 p-5 md:p-6" noValidate>
+    <form method="post" onSubmit={handleSubmit(onSubmit)} className="card space-y-5 p-5 md:p-6" noValidate>
       <div className="grid gap-5 md:grid-cols-2">
         <div>
           <label htmlFor="fullName" className="mb-1 block text-sm font-medium">Full name</label>

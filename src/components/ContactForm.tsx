@@ -19,7 +19,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="card space-y-4 p-5">
+    <form method="post" onSubmit={onSubmit} className="card space-y-4 p-5">
       <div>
         <label htmlFor="c-name" className="mb-1 block text-sm font-medium">Your name</label>
         <input id="c-name" name="name" required autoComplete="name" className="input" />

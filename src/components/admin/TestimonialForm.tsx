@@ -47,7 +47,7 @@ export default function TestimonialForm({ id, initial, photoUrl }: { id: string 
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); save(); }} className="space-y-6" noValidate>
+    <form method="post" onSubmit={(e) => { e.preventDefault(); save(); }} className="space-y-6" noValidate>
       {msg && <p role="alert" className="rounded border border-red bg-surface p-3 text-sm text-red">{msg}</p>}
       <section className="card space-y-4 p-5">
         <div className="grid gap-4 md:grid-cols-2">
