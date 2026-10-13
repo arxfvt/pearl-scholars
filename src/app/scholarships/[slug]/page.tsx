@@ -64,7 +64,7 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
 
       <dl className="card mt-5 grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 sm:p-5">
         <div><dt className="text-xs text-muted">Value</dt><dd className="font-bold">{s.amount_text ?? "See details"}</dd></div>
-        <div className="col-span-2 sm:col-span-1 sm:order-none"><dt className="text-xs text-muted">Levels</dt><dd className="font-bold">{s.levels.map((l) => levelLabels[l]).join(", ")}</dd></div>
+        <div className="order-last col-span-2 sm:order-none sm:col-span-1"><dt className="text-xs text-muted">Levels</dt><dd className="font-bold">{s.levels.map((l) => levelLabels[l]).join(", ")}</dd></div>
         <div>
           <dt className="text-xs text-muted">Deadline</dt>
           <dd className="font-bold">{formatDate(s.deadline)}{s.deadline && <><br /><Countdown deadline={s.deadline} /></>}</dd>
