@@ -13,7 +13,7 @@ type SP = Promise<Record<string, string | string[] | undefined>>;
 
 export default function Page({ searchParams }: { searchParams: SP }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
       <h1 className="text-3xl md:text-4xl">Scholarships</h1>
       <Suspense fallback={<div className="mt-6"><CardGridSkeleton count={6} /></div>}>
         <Results searchParams={searchParams} />
@@ -34,29 +34,41 @@ async function Results({ searchParams }: { searchParams: SP }) {
   ]);
   const now = Date.now();
   const active = Object.values(params).some(Boolean);
+  const moreActive = !!(params.country || params.field || params.deadline || params.sort === "deadline");
 
   return (
     <>
-      <form className="card mt-6 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-6" role="search" aria-label="Filter scholarships">
-        <div className="lg:col-span-2">
-          <label htmlFor="f-q" className="mb-1 block text-xs font-medium">Keyword</label>
-          <input id="f-q" name="q" defaultValue={params.q} className="input" placeholder="e.g. engineering" />
+      <form className="card mt-5 space-y-3 p-3 sm:p-4" role="search" aria-label="Filter scholarships">
+        <div className="grid grid-cols-[1fr_auto] gap-2 sm:grid-cols-[2fr_1fr_auto]">
+          <div className="col-span-2 sm:col-span-1">
+            <label htmlFor="f-q" className="sr-only">Keyword</label>
+            <input id="f-q" name="q" defaultValue={params.q} className="input" placeholder="Search, e.g. engineering" />
+          </div>
+          <div>
+            <label htmlFor="f-level" className="sr-only">Level</label>
+            <select id="f-level" name="level" defaultValue={params.level ?? ""} className="input">
+              <option value="">Any level</option>
+              {Object.entries(levelLabels).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </div>
+          <button className="btn btn-gold">Search</button>
         </div>
-        <Select id="f-level" name="level" label="Level" value={params.level} options={Object.entries(levelLabels).map(([v, l]) => [v, l])} />
-        <Select id="f-country" name="country" label="Country" value={params.country} options={opts.countries.map((c) => [c, c])} />
-        <Select id="f-field" name="field" label="Field of study" value={params.field} options={opts.fields.map((c) => [c, c])} />
-        <Select id="f-deadline" name="deadline" label="Deadline" value={params.deadline} options={[["7", "Within 7 days"], ["30", "Within 30 days"], ["90", "Within 90 days"]]} />
-        <div>
-          <label htmlFor="f-sort" className="mb-1 block text-xs font-medium">Sort by</label>
-          <select id="f-sort" name="sort" defaultValue={params.sort ?? "newest"} className="input">
-            <option value="newest">Newest</option>
-            <option value="deadline">Deadline</option>
-          </select>
-        </div>
-        <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-5">
-          <button className="btn btn-gold">Apply filters</button>
-          {active && <Link href="/scholarships" className="btn btn-outline">Clear</Link>}
-        </div>
+        <details open={moreActive} className="group">
+          <summary className="cursor-pointer select-none text-sm font-bold underline">More filters{moreActive ? " (active)" : ""}</summary>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Select id="f-country" name="country" label="Country" value={params.country} options={opts.countries.map((c) => [c, c])} />
+            <Select id="f-field" name="field" label="Field of study" value={params.field} options={opts.fields.map((c) => [c, c])} />
+            <Select id="f-deadline" name="deadline" label="Deadline" value={params.deadline} options={[["7", "Within 7 days"], ["30", "Within 30 days"], ["90", "Within 90 days"]]} />
+            <div>
+              <label htmlFor="f-sort" className="mb-1 block text-xs font-medium">Sort by</label>
+              <select id="f-sort" name="sort" defaultValue={params.sort ?? "newest"} className="input">
+                <option value="newest">Newest</option>
+                <option value="deadline">Deadline</option>
+              </select>
+            </div>
+          </div>
+        </details>
+        {active && <Link href="/scholarships" className="inline-block text-sm underline">Clear all filters</Link>}
       </form>
 
       <p className="mt-5 text-sm text-muted" role="status">{res.total} scholarship{res.total === 1 ? "" : "s"} found</p>
