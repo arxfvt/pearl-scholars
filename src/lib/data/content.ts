@@ -71,3 +71,12 @@ export async function getSiteImage(slot: SiteImageSlot) {
   const { data } = await supabase.from("site_images").select("storage_path,alt").eq("slot", slot).maybeSingle();
   return data ? { url: publicImageUrl(data.storage_path)!, alt: data.alt, path: data.storage_path } : null;
 }
+
+/** Uploaded photo, or one of four illustrated avatars picked consistently from the name. */
+export function avatarFor(t: { name: string; photo_path: string | null }) {
+  const photo = publicImageUrl(t.photo_path);
+  if (photo) return { src: photo, isPhoto: true };
+  let h = 0;
+  for (const c of t.name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return { src: `/avatars/a${(h % 4) + 1}.svg`, isPhoto: false };
+}

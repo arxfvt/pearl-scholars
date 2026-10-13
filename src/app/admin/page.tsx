@@ -56,7 +56,7 @@ async function Stats() {
 
   return (
     <>
-      <dl className="mt-6 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {tiles.map(([label, n, href]) => {
           const inner = <><dt className="text-sm text-muted">{label}</dt><dd className="text-3xl font-extrabold">{n ?? 0}</dd></>;
           return href ? <Link key={label} href={href} className="card p-4 hover:border-ink">{inner}</Link> : <div key={label} className="card p-4">{inner}</div>;

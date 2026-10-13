@@ -61,7 +61,7 @@ async function Results({ searchParams }: { searchParams: SP }) {
 
       <p className="mt-5 text-sm text-muted" role="status">{res.total} scholarship{res.total === 1 ? "" : "s"} found</p>
       {res.items.length ? (
-        <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {res.items.map((s) => <ScholarshipCard key={s.id} s={s} now={now} />)}
         </div>
       ) : (

@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import sanitizeHtml from "sanitize-html";
 import { getScholarshipBySlug, displayStatus, providerLabel } from "@/lib/data/scholarships";
 import VideoEmbed from "@/components/VideoEmbed";
+import AdminShortcut from "@/components/AdminShortcut";
 import { coverFor } from "@/lib/data/content";
 import { levelLabels } from "@/lib/types";
 import { formatDate } from "@/lib/format";
@@ -53,16 +54,17 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
   ];
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-10">
+    <article className="mx-auto max-w-4xl px-4 pb-28 pt-6 md:py-10">
+      <AdminShortcut links={[{ href: `/admin/scholarships/${s.id}`, label: "Edit this scholarship" }, { href: `/admin/registrations?scholarship=${s.id}`, label: "See registered students" }]} />
       <nav aria-label="Breadcrumb" className="mb-4 text-sm"><Link href="/scholarships" className="underline">Scholarships</Link></nav>
       <div className="relative mb-6 aspect-[16/7] overflow-hidden rounded-xl bg-ink"><Image src={cover} alt="" fill sizes="(min-width:896px) 896px, 100vw" className="object-cover" priority /></div>
       <div className="flex flex-wrap items-center gap-3"><StatusBadge status={status} /><span className="text-sm text-muted">{s.country}</span></div>
-      <h1 className="mt-3 text-3xl md:text-4xl">{s.title}</h1>
+      <h1 className="mt-3 text-2xl leading-tight md:text-4xl">{s.title}</h1>
       <p className="mt-1 text-muted">{providerLabel(s)}</p>
 
-      <dl className="card mt-6 grid gap-4 p-5 sm:grid-cols-3">
+      <dl className="card mt-5 grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 sm:p-5">
         <div><dt className="text-xs text-muted">Value</dt><dd className="font-bold">{s.amount_text ?? "See details"}</dd></div>
-        <div><dt className="text-xs text-muted">Levels</dt><dd className="font-bold">{s.levels.map((l) => levelLabels[l]).join(", ")}</dd></div>
+        <div className="col-span-2 sm:col-span-1 sm:order-none"><dt className="text-xs text-muted">Levels</dt><dd className="font-bold">{s.levels.map((l) => levelLabels[l]).join(", ")}</dd></div>
         <div>
           <dt className="text-xs text-muted">Deadline</dt>
           <dd className="font-bold">{formatDate(s.deadline)}{s.deadline && <><br /><Countdown deadline={s.deadline} /></>}</dd>
@@ -73,9 +75,9 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
         {status === "closed" ? (
           <span className="rounded-lg border border-line bg-surface px-4 py-3 font-bold">Applications are closed</span>
         ) : (
-          <Link href={`/scholarships/${s.slug}/register`} className="btn btn-gold">Register for this scholarship</Link>
+          <Link href={`/scholarships/${s.slug}/register`} className="btn btn-gold w-full sm:w-auto">Register for this scholarship</Link>
         )}
-        {s.provider_url && !s.provider_hidden && <a href={s.provider_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline">Visit provider site</a>}
+        {s.provider_url && !s.provider_hidden && <a href={s.provider_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline w-full sm:w-auto">Visit provider site</a>}
       </div>
 
       {s.video_url && (
@@ -95,6 +97,15 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
       </div>
 
       <div className="mt-8 border-t border-line pt-5"><ShareButtons url={url} title={s.title} /></div>
+      {status !== "closed" && (
+        <div data-mobile-cta className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur md:hidden">
+          <div className="min-w-0 flex-1 text-xs">
+            <p className="text-muted">Deadline</p>
+            <p className={`truncate font-bold ${status === "closing_soon" ? "text-red" : ""}`}>{formatDate(s.deadline)}</p>
+          </div>
+          <Link href={`/scholarships/${s.slug}/register`} className="btn btn-gold">Register now</Link>
+        </div>
+      )}
     </article>
   );
 }

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { publicImageUrl } from "@/lib/data/content";
+import { avatarFor } from "@/lib/data/content";
 import { BlockSkeleton } from "@/components/Skeleton";
 
 export default function Page({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
@@ -33,18 +33,17 @@ async function List({ searchParams }: { searchParams: Promise<{ saved?: string }
       ) : (
         <ul className="mt-6 space-y-3">
           {rows.map((t) => {
-            const photo = publicImageUrl(t.photo_path);
+            const avatar = avatarFor(t);
             return (
-              <li key={t.id} className="card flex items-center gap-4 p-3">
-                {photo ? <Image src={photo} alt="" width={56} height={56} className="h-14 w-14 rounded-full object-cover" />
-                  : <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink font-extrabold text-gold" aria-hidden>{t.name.replace("[SAMPLE] ", "").charAt(0)}</span>}
+              <li key={t.id} className="card flex flex-wrap items-center gap-3 p-3 sm:flex-nowrap sm:gap-4">
+                <Image src={avatar.src} alt="" width={56} height={56} className="h-14 w-14 rounded-full border-2 border-gold object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-bold">{t.name}</p>
                   <p className="truncate text-sm text-muted">{t.scholarship_won}{t.school ? ` · ${t.school}` : ""}</p>
                 </div>
                 <span className={`rounded px-2 py-0.5 text-xs font-bold ${t.approved ? "bg-ink text-white" : "bg-line"}`}>{t.approved ? "Shown" : "Hidden"}</span>
                 {t.is_sample && <span className="rounded border border-line px-2 py-0.5 text-xs">Sample</span>}
-                <Link href={`/admin/testimonials/${t.id}`} className="font-bold underline">Edit</Link>
+                <Link href={`/admin/testimonials/${t.id}`} className="btn btn-gold min-h-9 px-4 py-1 text-sm">Edit{avatar.isPhoto ? "" : " / add photo"}</Link>
               </li>
             );
           })}

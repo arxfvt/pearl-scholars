@@ -5,8 +5,9 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import { levelLabels } from "@/lib/types";
 import { getFeatured, getClosingSoon } from "@/lib/data/scholarships";
-import { getFaq, getStats, getTestimonials, getContact, publicImageUrl, getSiteImage } from "@/lib/data/content";
+import { getFaq, getStats, getTestimonials, getContact, getSiteImage } from "@/lib/data/content";
 import ScholarshipCard from "@/components/ScholarshipCard";
+import StoryCard from "@/components/StoryCard";
 import { CardGridSkeleton } from "@/components/Skeleton";
 
 export default function Home() {
@@ -14,9 +15,9 @@ export default function Home() {
     <>
       <section className="relative isolate overflow-hidden bg-ink text-white">
         <Suspense fallback={<HeroBackdrop url={null} />}><HeroImage /></Suspense>
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-14 text-center md:py-20">
-          <Image src="/brand/icon-light-transparent.svg" alt="" width={88} height={88} priority />
-          <h1 className="text-4xl md:text-6xl">{site.tagline}</h1>
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-4 py-10 text-center md:gap-6 md:py-20">
+          <Image src="/brand/icon-light-transparent.svg" alt="" width={88} height={88} priority className="h-16 w-16 md:h-22 md:w-22" />
+          <h1 className="text-[2.1rem] leading-tight md:text-6xl">{site.tagline}</h1>
           <p className="max-w-xl text-white/85">Find scholarships across Uganda and East Africa, register in minutes and track every step.</p>
           <nav aria-label="Browse scholarships by level" className="flex w-full max-w-2xl flex-col items-center gap-3">
             <span className="text-sm font-medium text-white/85">What level are you studying?</span>
@@ -94,7 +95,7 @@ async function Featured() {
   const items = await getFeatured(3);
   const now = Date.now();
   if (!items.length) return <p className="text-muted">New scholarships are added regularly. Check back soon.</p>;
-  return <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((s) => <ScholarshipCard key={s.id} s={s} now={now} />)}</div>;
+  return <div className="grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">{items.map((s) => <ScholarshipCard key={s.id} s={s} now={now} />)}</div>;
 }
 
 async function Closing() {
@@ -104,7 +105,7 @@ async function Closing() {
   if (!items.length) return null;
   return (
     <Section title="Closing soon" href="/scholarships?sort=deadline" cta="See by deadline">
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((s) => <ScholarshipCard key={s.id} s={s} now={now} />)}</div>
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">{items.map((s) => <ScholarshipCard key={s.id} s={s} now={now} />)}</div>
     </Section>
   );
 }
@@ -128,19 +129,10 @@ async function Testimonials() {
   if (!items.length) return null;
   return (
     <Section title="Success stories" href="/testimonials" cta="Read more">
-      <ul className="flex snap-x gap-4 overflow-x-auto pb-3" aria-label="Student testimonials">
-        {items.map((t) => {
-          const photo = publicImageUrl(t.photo_path);
-          return (
-            <li key={t.id} className="card w-72 shrink-0 snap-start p-5">
-              <blockquote className="text-sm">&ldquo;{t.quote}&rdquo;</blockquote>
-              <div className="mt-4 flex items-center gap-3">
-                {photo && <Image src={photo} alt="" width={40} height={40} className="h-10 w-10 rounded-full object-cover" />}
-                <p className="text-sm"><strong>{t.name}</strong><br /><span className="text-muted">{t.scholarship_won}</span></p>
-              </div>
-            </li>
-          );
-        })}
+      <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3" aria-label="Student success stories">
+        {items.map((t) => (
+          <li key={t.id} className="w-[85%] max-w-sm shrink-0 snap-start sm:w-80"><StoryCard t={t} compact /></li>
+        ))}
       </ul>
     </Section>
   );

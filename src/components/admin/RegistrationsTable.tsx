@@ -39,6 +39,7 @@ export default function RegistrationsTable({ rows }: { rows: Row[] }) {
   return (
     <div className="mt-4 space-y-3">
       <div className="card flex flex-wrap items-center gap-3 p-3 text-sm">
+        <label className="flex items-center gap-2 font-medium md:hidden"><input type="checkbox" className="h-5 w-5 accent-ink" checked={all} onChange={(e) => setSelected(e.target.checked ? rows.map((r) => r.id) : [])} /> All</label>
         <span className="font-medium">{selected.length} selected</span>
         <label className="sr-only" htmlFor="bulk-status">New status</label>
         <select id="bulk-status" className="input max-w-48" value={status} onChange={(e) => setStatus(e.target.value as RegistrationStatus)}>
@@ -49,7 +50,24 @@ export default function RegistrationsTable({ rows }: { rows: Row[] }) {
         {msg && <span role="status">{msg}</span>}
       </div>
 
-      <div className="card overflow-x-auto">
+      <ul className="space-y-2 md:hidden">
+        {rows.map((r) => (
+          <li key={r.id} className="card flex gap-3 p-3">
+            <input type="checkbox" aria-label={`Select ${r.name}`} className="mt-1 h-5 w-5 shrink-0 accent-ink" checked={selected.includes(r.id)} onChange={(e) => setSelected(e.target.checked ? [...selected, r.id] : selected.filter((x) => x !== r.id))} />
+            <Link href={`/admin/registrations/${r.id}`} className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <p className="truncate font-bold underline">{r.name}</p>
+                <span className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-bold ${statusStyle[r.status]}`}>{statusLabels[r.status]}</span>
+              </div>
+              <p className="truncate text-sm">{r.scholarship}</p>
+              <p className="text-xs text-muted">{levelLabels[r.level]}{r.currentClass ? ` · ${r.currentClass}` : ""} · {r.district}{r.gender ? ` · ${r.gender.replace(/_/g, " ")}` : ""}</p>
+              <p className="text-xs text-muted">{r.reference} · {r.phone} · {r.created}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <div className="card hidden overflow-x-auto md:block">
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="border-b border-line bg-ivory text-xs uppercase tracking-wide text-muted">
             <tr>
