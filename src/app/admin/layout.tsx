@@ -20,6 +20,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <nav aria-label="Admin" className="mb-6 flex flex-wrap items-center gap-2 border-b border-line pb-4">
         <span className="mr-2 rounded bg-ink px-2 py-1 text-xs font-bold text-gold">ADMIN</span>
         {links.map((l) => (<Link key={l.href} href={l.href} className="btn btn-outline min-h-9 px-3 py-1 text-sm">{l.label}</Link>))}
+        <form action="/auth/signout" method="post" className="ml-auto">
+          <button className="btn min-h-9 bg-ink px-3 py-1 text-sm text-white hover:bg-ink/85">Log out</button>
+        </form>
       </nav>
       <Suspense fallback={<BlockSkeleton h="h-96" />}>
         <Guard>{children}</Guard>
