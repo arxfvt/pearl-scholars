@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import sanitizeHtml from "sanitize-html";
-import { getScholarshipBySlug, displayStatus } from "@/lib/data/scholarships";
+import { getScholarshipBySlug, displayStatus, providerLabel } from "@/lib/data/scholarships";
+import VideoEmbed from "@/components/VideoEmbed";
 import { coverFor } from "@/lib/data/content";
 import { levelLabels } from "@/lib/types";
 import { formatDate } from "@/lib/format";
@@ -57,7 +58,7 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
       <div className="relative mb-6 aspect-[16/7] overflow-hidden rounded-xl bg-ink"><Image src={cover} alt="" fill sizes="(min-width:896px) 896px, 100vw" className="object-cover" priority /></div>
       <div className="flex flex-wrap items-center gap-3"><StatusBadge status={status} /><span className="text-sm text-muted">{s.country}</span></div>
       <h1 className="mt-3 text-3xl md:text-4xl">{s.title}</h1>
-      <p className="mt-1 text-muted">{s.provider}</p>
+      <p className="mt-1 text-muted">{providerLabel(s)}</p>
 
       <dl className="card mt-6 grid gap-4 p-5 sm:grid-cols-3">
         <div><dt className="text-xs text-muted">Value</dt><dd className="font-bold">{s.amount_text ?? "See details"}</dd></div>
@@ -74,8 +75,15 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
         ) : (
           <Link href={`/scholarships/${s.slug}/register`} className="btn btn-gold">Register for this scholarship</Link>
         )}
-        {s.provider_url && <a href={s.provider_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline">Visit provider site</a>}
+        {s.provider_url && !s.provider_hidden && <a href={s.provider_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline">Visit provider site</a>}
       </div>
+
+      {s.video_url && (
+        <section className="mt-8">
+          <h2 className="mb-3 text-xl">Watch: about this scholarship</h2>
+          <VideoEmbed url={s.video_url} title={s.title} />
+        </section>
+      )}
 
       <div className="mt-8 space-y-8">
         {blocks.map(([title, body]) => body && (

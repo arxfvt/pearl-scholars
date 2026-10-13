@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { startRegistration, finishRegistration } from "@/app/actions/registration";
 import { registrationSchema, MAX_FILES, MAX_FILE_BYTES, allowedMime, type RegistrationInput } from "@/lib/validation";
 import { levelLabels } from "@/lib/types";
+import { currentClasses, genders, heardFromOptions, ugandaDistricts } from "@/lib/uganda";
 import Turnstile, { readTurnstile } from "@/components/Turnstile";
 
 type Fields = Omit<RegistrationInput, "scholarshipId" | "utm" | "consent"> & { consent: boolean };
@@ -111,8 +112,65 @@ export default function RegistrationForm({ scholarshipId, slug, defaults }: { sc
         </div>
         <div>
           <label htmlFor="district" className="mb-1 block text-sm font-medium">District</label>
-          <input id="district" className="input" aria-invalid={!!errors.district} {...register("district")} />
+          <input id="district" list="ug-districts" autoComplete="off" placeholder="Start typing, e.g. Wakiso" className="input" aria-invalid={!!errors.district} {...register("district")} />
+          <datalist id="ug-districts">{ugandaDistricts.map((d) => <option key={d} value={d} />)}</datalist>
           {err("district")}
+        </div>
+        <div>
+          <label htmlFor="gender" className="mb-1 block text-sm font-medium">Gender</label>
+          <select id="gender" className="input" aria-invalid={!!errors.gender} {...register("gender")}>
+            <option value="">Choose...</option>
+            {genders.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
+          </select>
+          {err("gender")}
+        </div>
+        <div>
+          <label htmlFor="dateOfBirth" className="mb-1 block text-sm font-medium">Date of birth</label>
+          <input id="dateOfBirth" type="date" autoComplete="bday" className="input" aria-invalid={!!errors.dateOfBirth} {...register("dateOfBirth")} />
+          {err("dateOfBirth")}
+        </div>
+        <div>
+          <label htmlFor="currentClass" className="mb-1 block text-sm font-medium">Current class or year</label>
+          <select id="currentClass" className="input" aria-invalid={!!errors.currentClass} {...register("currentClass")}>
+            <option value="">Choose...</option>
+            {currentClasses.map((g) => (
+              <optgroup key={g.group} label={g.group}>{g.options.map((o) => <option key={o} value={o}>{o}</option>)}</optgroup>
+            ))}
+          </select>
+          {err("currentClass")}
+        </div>
+        <div>
+          <label htmlFor="examResults" className="mb-1 block text-sm font-medium">Latest results (optional)</label>
+          <input id="examResults" placeholder="e.g. PLE aggregate 8, UCE 21, UACE 18 points" className="input" {...register("examResults")} />
+          {err("examResults")}
+        </div>
+      </div>
+
+      <fieldset className="grid gap-5 rounded-lg border border-line p-4 md:grid-cols-2">
+        <legend className="px-1 text-sm font-medium">Parent or guardian <span className="font-normal text-muted">(required for O-Level and A-Level students)</span></legend>
+        <div>
+          <label htmlFor="guardianName" className="mb-1 block text-sm font-medium">Name</label>
+          <input id="guardianName" autoComplete="off" className="input" aria-invalid={!!errors.guardianName} {...register("guardianName")} />
+          {err("guardianName")}
+        </div>
+        <div>
+          <label htmlFor="guardianPhone" className="mb-1 block text-sm font-medium">Phone</label>
+          <input id="guardianPhone" type="tel" inputMode="tel" placeholder="+256 7XX XXX XXX" className="input" aria-invalid={!!errors.guardianPhone} {...register("guardianPhone")} />
+          {err("guardianPhone")}
+        </div>
+      </fieldset>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label htmlFor="specialNeeds" className="mb-1 block text-sm font-medium">Disability or special need (optional)</label>
+          <input id="specialNeeds" placeholder="Tell us if you need any support" className="input" {...register("specialNeeds")} />
+        </div>
+        <div>
+          <label htmlFor="heardFrom" className="mb-1 block text-sm font-medium">How did you hear about us? (optional)</label>
+          <select id="heardFrom" className="input" {...register("heardFrom")}>
+            <option value="">Choose...</option>
+            {heardFromOptions.map((h) => <option key={h} value={h}>{h}</option>)}
+          </select>
         </div>
       </div>
 

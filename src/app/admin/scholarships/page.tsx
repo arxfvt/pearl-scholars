@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { coverFor } from "@/lib/data/content";
 import { displayStatus } from "@/lib/data/scholarships";
+import { countsPerScholarship } from "@/lib/data/registrations";
 import { formatDate } from "@/lib/format";
 import type { Scholarship } from "@/lib/types";
 import RowActions from "@/components/admin/RowActions";
@@ -28,8 +29,9 @@ async function List({ searchParams }: { searchParams: Promise<{ saved?: string }
   await connection();
   const { saved } = await searchParams;
   const supabase = await createClient();
+  const counts = new Map((await countsPerScholarship()).map((c) => [c.id, c.total]));
   const { data } = await supabase.from("scholarships")
-    .select("id,slug,title,provider,status,deadline,featured,levels,cover_image_path,is_sample")
+    .select("id,slug,title,provider,provider_hidden,status,deadline,featured,levels,cover_image_path,is_sample")
     .order("updated_at", { ascending: false });
   const rows = (data ?? []) as (Scholarship & { is_sample: boolean })[];
   const now = Date.now();
@@ -59,7 +61,7 @@ async function List({ searchParams }: { searchParams: Promise<{ saved?: string }
                     {s.is_sample && <span className="rounded border border-line px-2 py-0.5">Sample</span>}
                   </div>
                   <p className="truncate font-bold">{s.title}</p>
-                  <p className="text-sm text-muted">{s.provider} · Deadline {formatDate(s.deadline)}</p>
+                  <p className="text-sm text-muted">{s.provider}{s.provider_hidden ? " (private)" : ""} · Deadline {formatDate(s.deadline)} · <Link href={`/admin/registrations?scholarship=${s.id}`} className="font-bold text-ink underline">{counts.get(s.id) ?? 0} student{counts.get(s.id) === 1 ? "" : "s"}</Link></p>
                   <RowActions id={s.id} slug={s.slug} status={s.status} title={s.title} />
                 </div>
               </li>

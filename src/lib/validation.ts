@@ -31,8 +31,30 @@ export const registrationSchema = z.object({
   level: z.enum(levels, { message: "Choose your level of study" }),
   institution: text("your school or institution"),
   district: text("your district", 80),
+  gender: z.enum(["female", "male", "prefer_not_to_say"], { message: "Choose an option" }),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter your date of birth").refine((d) => {
+    const age = (Date.now() - new Date(d).getTime()) / (365.25 * 86400000);
+    return age >= 8 && age <= 80;
+  }, "Check your date of birth"),
+  currentClass: z.string().trim().min(1, "Choose your current class").max(40),
+  examResults: z.string().trim().max(200).optional().transform((v) => v || null),
+  guardianName: z.string().trim().max(120).optional().transform((v) => v || null),
+  guardianPhone: z.string().trim().optional().transform((v, ctx) => {
+    if (!v) return null;
+    const n = normalizeUgPhone(v);
+    if (!n) ctx.addIssue({ code: "custom", message: "Enter a valid Uganda number" });
+    return n;
+  }),
+  specialNeeds: z.string().trim().max(300).optional().transform((v) => v || null),
+  heardFrom: z.string().trim().max(60).optional().transform((v) => v || null),
   consent: z.literal(true, { message: "You must agree to continue" }),
   utm: z.record(z.string(), z.string().max(200)).optional(),
+}).superRefine((v, ctx) => {
+  // Secondary students are usually minors: a parent or guardian contact is required.
+  if (v.level === "o_level" || v.level === "a_level") {
+    if (!v.guardianName) ctx.addIssue({ code: "custom", path: ["guardianName"], message: "Enter a parent or guardian's name" });
+    if (!v.guardianPhone) ctx.addIssue({ code: "custom", path: ["guardianPhone"], message: "Enter a parent or guardian's phone" });
+  }
 });
 export type RegistrationInput = z.input<typeof registrationSchema>;
 
@@ -75,6 +97,8 @@ export const scholarshipSchema = z.object({
   slug: z.string().trim().max(120).optional(),
   provider: z.string().trim().min(2, "Enter the provider").max(160),
   provider_url: z.union([z.literal(""), z.string().trim().url("Enter a full link starting with https://").max(500)]).optional().transform((v) => v || null),
+  provider_hidden: z.boolean(),
+  video_url: z.union([z.literal(""), z.string().trim().url("Enter a full video link starting with https://").max(500).refine((u) => u.startsWith("https://"), "Use an https:// link")]).optional().transform((v) => v || null),
   country: z.string().trim().min(2, "Enter the country").max(80),
   summary: optionalText(300),
   description: optionalText(20000),

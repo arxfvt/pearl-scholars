@@ -7,8 +7,11 @@ export const metadata = { title: "Admin", robots: { index: false, follow: false 
 
 const links = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/registrations", label: "Registrations" },
   { href: "/admin/scholarships", label: "Scholarships" },
+  { href: "/admin/testimonials", label: "Success stories" },
   { href: "/admin/images", label: "Site images" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

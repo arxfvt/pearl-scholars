@@ -27,7 +27,7 @@ async function Editor({ params }: { params: Promise<{ id: string }> }) {
   if (!s) notFound();
 
   const initial: ScholarshipFormValues = {
-    title: s.title, slug: s.slug, provider: s.provider, provider_url: s.provider_url ?? "", country: s.country,
+    title: s.title, slug: s.slug, provider: s.provider, provider_url: s.provider_url ?? "", provider_hidden: s.provider_hidden ?? false, video_url: s.video_url ?? "", country: s.country,
     summary: s.summary ?? "", description: s.description ?? "", eligibility: s.eligibility ?? "", benefits: s.benefits ?? "",
     required_documents: s.required_documents ?? "", amount_text: s.amount_text ?? "", levels: s.levels ?? [],
     fields: (s.fields ?? []).join(", "), tags: (s.tags ?? []).join(", "), cover_image_path: s.cover_image_path,

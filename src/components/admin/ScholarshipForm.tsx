@@ -6,14 +6,14 @@ import { levelLabels, type StudyLevel, type PublishStatus } from "@/lib/types";
 import ImageUpload from "@/components/admin/ImageUpload";
 
 export interface ScholarshipFormValues {
-  title: string; slug: string; provider: string; provider_url: string; country: string;
+  title: string; slug: string; provider: string; provider_url: string; provider_hidden: boolean; video_url: string; country: string;
   summary: string; description: string; eligibility: string; benefits: string; required_documents: string;
   amount_text: string; levels: StudyLevel[]; fields: string; tags: string;
   cover_image_path: string | null; deadline: string; featured: boolean; status: PublishStatus;
 }
 
 export const emptyScholarship: ScholarshipFormValues = {
-  title: "", slug: "", provider: "", provider_url: "", country: "Uganda", summary: "", description: "", eligibility: "",
+  title: "", slug: "", provider: "", provider_url: "", provider_hidden: false, video_url: "", country: "Uganda", summary: "", description: "", eligibility: "",
   benefits: "", required_documents: "", amount_text: "", levels: [], fields: "", tags: "", cover_image_path: null,
   deadline: "", featured: false, status: "draft",
 };
@@ -70,12 +70,16 @@ export default function ScholarshipForm({ id, initial, coverUrl }: { id: string 
         {text("title", "Title", { required: true, placeholder: "e.g. Mastercard Foundation Scholars Program 2027" })}
         <div className="grid gap-4 md:grid-cols-2">
           {text("provider", "Provider", { required: true })}
-          {text("provider_url", "Official provider link", { type: "url", placeholder: "https://", help: "Required to publish, so students can verify the scholarship is genuine." })}
+          {text("provider_url", "Provider website (optional)", { type: "url", placeholder: "https://", help: "Leave empty if the provider has no website or prefers not to share it." })}
           {text("country", "Country of study", { required: true })}
           {text("amount_text", "Value or coverage", { placeholder: "e.g. Full tuition + stipend" })}
           {text("deadline", "Deadline (Kampala time)", { type: "datetime-local", help: "After this time the scholarship shows as closed automatically." })}
           {text("slug", "Web address (optional)", { placeholder: "made from the title if left empty" })}
         </div>
+        <label className="flex items-start gap-2 text-sm">
+          <input type="checkbox" className="mt-0.5 h-5 w-5 accent-ink" checked={v.provider_hidden} onChange={(e) => set("provider_hidden", e.target.checked)} />
+          <span><strong>Private sponsor.</strong> Hide the provider&rsquo;s name and website from the public. Students will see &ldquo;Private sponsor&rdquo;. You still see the real name here.</span>
+        </label>
         <fieldset>
           <legend className="mb-1 text-sm font-medium">Levels of study <span className="text-red">*</span></legend>
           <div className="flex flex-wrap gap-4">
@@ -99,6 +103,11 @@ export default function ScholarshipForm({ id, initial, coverUrl }: { id: string 
         <ImageUpload id="cover" label="Cover photo" folder="covers" maxWidth={1600} previewUrl={preview}
           hint="Wide photos work best. It is resized and compressed automatically. Without one, a generic image for the level is shown."
           onChange={(path, url) => { set("cover_image_path", path); setPreview(url); }} />
+      </section>
+
+      <section className="card space-y-4 p-5">
+        <h2 className="text-lg">Video advert</h2>
+        {text("video_url", "Video link (optional)", { type: "url", placeholder: "https://www.youtube.com/watch?v=...", help: "YouTube videos play on the scholarship page (they only load when tapped, to save students' data). TikTok or Facebook links show a 'Watch video' button." })}
       </section>
 
       <section className="card space-y-4 p-5">

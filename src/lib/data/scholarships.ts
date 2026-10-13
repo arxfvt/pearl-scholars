@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import type { Scholarship, StudyLevel } from "@/lib/types";
 
 export const PAGE_SIZE = 9;
+
+/** Providers can choose to stay private: the public site then shows a neutral label instead of their name. */
+export const providerLabel = (s: { provider: string; provider_hidden?: boolean }) => (s.provider_hidden ? "Private sponsor" : s.provider);
 export type DisplayStatus = "open" | "closing_soon" | "closed";
 
 export function displayStatus(s: Pick<Scholarship, "status" | "deadline">, now = Date.now()): DisplayStatus {
@@ -13,7 +16,7 @@ export function displayStatus(s: Pick<Scholarship, "status" | "deadline">, now =
   return left <= 14 * 86400000 ? "closing_soon" : "open";
 }
 
-const card = "id,slug,title,provider,country,summary,amount_text,levels,fields,cover_image_path,deadline,featured,status";
+const card = "id,slug,title,provider,provider_hidden,country,summary,amount_text,levels,fields,cover_image_path,deadline,featured,status";
 
 export interface ScholarshipFilters {
   q?: string;
@@ -34,7 +37,7 @@ export async function listScholarships(f: ScholarshipFilters) {
   let query = supabase.from("scholarships").select(card, { count: "exact" }).in("status", ["published", "closed"]);
 
   const q = f.q?.replace(/[^\p{L}\p{N}\s-]/gu, " ").trim();
-  if (q) query = query.or(`title.ilike.%${q}%,provider.ilike.%${q}%,summary.ilike.%${q}%`);
+  if (q) query = query.or(`title.ilike.%${q}%,summary.ilike.%${q}%,and(provider.ilike.%${q}%,provider_hidden.eq.false)`);
   if (f.level && LEVELS.includes(f.level as StudyLevel)) query = query.contains("levels", [f.level]);
   if (f.country) query = query.eq("country", f.country);
   if (f.field) query = query.contains("fields", [f.field]);

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Scholarship } from "@/lib/types";
 import { levelLabels } from "@/lib/types";
-import { displayStatus } from "@/lib/data/scholarships";
+import { displayStatus, providerLabel } from "@/lib/data/scholarships";
 import { coverFor } from "@/lib/data/content";
 import { formatDate } from "@/lib/format";
 import StatusBadge from "@/components/StatusBadge";
@@ -23,7 +23,7 @@ export default function ScholarshipCard({ s, now }: { s: Scholarship; now: numbe
         <h3 className="text-lg leading-snug">
           <Link href={`/scholarships/${s.slug}`} className="after:absolute after:inset-0 relative hover:underline">{s.title}</Link>
         </h3>
-        <p className="text-sm text-muted">{s.provider}</p>
+        <p className="text-sm text-muted">{providerLabel(s)}</p>
         <div className="flex flex-wrap gap-1.5">
           {s.levels.map((l) => (<span key={l} className="rounded border border-line px-2 py-0.5 text-xs">{levelLabels[l]}</span>))}
         </div>

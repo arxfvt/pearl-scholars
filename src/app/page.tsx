@@ -15,19 +15,18 @@ export default function Home() {
       <section className="relative isolate overflow-hidden bg-ink text-white">
         <Suspense fallback={<HeroBackdrop url={null} />}><HeroImage /></Suspense>
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-14 text-center md:py-20">
-          <Image src="/brand/icon-on-black.svg" alt="" width={88} height={88} priority />
+          <Image src="/brand/icon-light-transparent.svg" alt="" width={88} height={88} priority />
           <h1 className="text-4xl md:text-6xl">{site.tagline}</h1>
-          <p className="max-w-xl text-white/80">Find scholarships across Uganda and East Africa, register in minutes and track every step.</p>
-          <form action="/scholarships" className="flex w-full max-w-2xl flex-col gap-2 sm:flex-row" role="search">
-            <label htmlFor="q" className="sr-only">Search scholarships</label>
-            <input id="q" name="q" placeholder="Search by keyword" className="input text-ink" />
-            <label htmlFor="level" className="sr-only">Level of study</label>
-            <select id="level" name="level" className="input text-ink sm:max-w-44" defaultValue="">
-              <option value="">Any level</option>
-              {Object.entries(levelLabels).map(([v, l]) => (<option key={v} value={v}>{l}</option>))}
-            </select>
-            <button className="btn btn-gold">Search</button>
-          </form>
+          <p className="max-w-xl text-white/85">Find scholarships across Uganda and East Africa, register in minutes and track every step.</p>
+          <nav aria-label="Browse scholarships by level" className="flex w-full max-w-2xl flex-col items-center gap-3">
+            <span className="text-sm font-medium text-white/85">What level are you studying?</span>
+            <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4">
+              {Object.entries(levelLabels).map(([v, l]) => (
+                <Link key={v} href={`/scholarships?level=${v}`} className="btn btn-gold">{l}</Link>
+              ))}
+            </div>
+            <Link href="/scholarships" className="text-sm font-bold text-white underline">Browse all scholarships</Link>
+          </nav>
         </div>
       </section>
 

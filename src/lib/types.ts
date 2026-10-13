@@ -24,6 +24,8 @@ export interface Scholarship {
   title: string;
   provider: string;
   provider_url: string | null;
+  provider_hidden: boolean;
+  video_url: string | null;
   country: string;
   summary: string | null;
   description: string | null;

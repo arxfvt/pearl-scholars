@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="main" className="flex-1">{children}</main>
         <Footer />
-        <WhatsAppButton />
+        <Suspense fallback={null}><WhatsAppButton /></Suspense>
       </body>
     </html>
   );
