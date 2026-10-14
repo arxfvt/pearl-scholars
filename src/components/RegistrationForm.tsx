@@ -10,7 +10,10 @@ import { currentClasses, genders, heardFromOptions, ugandaDistricts } from "@/li
 import Turnstile, { readTurnstile } from "@/components/Turnstile";
 
 type Fields = Omit<RegistrationInput, "scholarshipId" | "utm" | "consent"> & { consent: boolean };
-export interface Defaults { fullName?: string; email?: string; phone?: string; level?: string; institution?: string; district?: string }
+export interface Defaults {
+  fullName?: string; email?: string; phone?: string; level?: string; institution?: string; district?: string;
+  gender?: string; dateOfBirth?: string; currentClass?: string; examResults?: string; guardianName?: string; guardianPhone?: string;
+}
 
 function readUtm(): Record<string, string> | undefined {
   try {

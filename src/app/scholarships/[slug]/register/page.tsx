@@ -34,7 +34,7 @@ async function Content({ params }: { params: Promise<{ slug: string }> }) {
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: p } = user ? await supabase.from("profiles").select("full_name,email,phone,level,institution,district").eq("id", user.id).maybeSingle() : { data: null };
+  const { data: p } = user ? await supabase.from("profiles").select("full_name,email,phone,level,institution,district,gender,date_of_birth,current_class,exam_results,guardian_name,guardian_phone").eq("id", user.id).maybeSingle() : { data: null };
 
   return (
     <>
@@ -47,7 +47,7 @@ async function Content({ params }: { params: Promise<{ slug: string }> }) {
       <RegistrationForm
         scholarshipId={s.id}
         slug={s.slug}
-        defaults={{ fullName: p?.full_name ?? "", email: p?.email ?? user?.email ?? "", phone: p?.phone ?? "", level: p?.level ?? "", institution: p?.institution ?? "", district: p?.district ?? "" }}
+        defaults={{ fullName: p?.full_name ?? "", email: p?.email ?? user?.email ?? "", phone: p?.phone ?? "", level: p?.level ?? "", institution: p?.institution ?? "", district: p?.district ?? "", gender: p?.gender ?? "", dateOfBirth: p?.date_of_birth ?? "", currentClass: p?.current_class ?? "", examResults: p?.exam_results ?? "", guardianName: p?.guardian_name ?? "", guardianPhone: p?.guardian_phone ?? "" }}
       />
     </>
   );

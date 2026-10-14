@@ -78,6 +78,20 @@ export async function startRegistration(raw: unknown, filesRaw: unknown, turnsti
     .single();
   if (error || !reg) return { ok: false, error: "We could not save your registration. Please try again." };
 
+  // Remember the student's details for next time: only fills profile fields that are still empty.
+  if (user) {
+    const { data: prof } = await admin.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    if (prof) {
+      const fill: Record<string, unknown> = {
+        full_name: data.fullName, phone: data.phone, level: data.level, institution: data.institution, district: data.district,
+        gender: data.gender, date_of_birth: data.dateOfBirth, current_class: data.currentClass, exam_results: data.examResults,
+        guardian_name: data.guardianName, guardian_phone: data.guardianPhone,
+      };
+      const patch = Object.fromEntries(Object.entries(fill).filter(([k, v]) => v && !prof[k]));
+      if (Object.keys(patch).length) await admin.from("profiles").update(patch).eq("id", user.id);
+    }
+  }
+
   const prefix = `${user?.id ?? "guest"}/${reg.id}`;
   const uploads: { path: string; token: string }[] = [];
   for (const m of metas) {

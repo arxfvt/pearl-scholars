@@ -16,6 +16,6 @@ export default async function AuthLink() {
   return admin ? (
     <Link href="/admin" className="btn btn-gold">Admin</Link>
   ) : (
-    <Link href="/account" className="btn btn-gold">My registrations</Link>
+    <Link href="/account" className="btn btn-gold">My dashboard</Link>
   );
 }

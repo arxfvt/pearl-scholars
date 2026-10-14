@@ -7,6 +7,8 @@ import sanitizeHtml from "sanitize-html";
 import { getScholarshipBySlug, displayStatus, providerLabel } from "@/lib/data/scholarships";
 import VideoEmbed from "@/components/VideoEmbed";
 import AdminShortcut from "@/components/AdminShortcut";
+import SaveButton from "@/components/student/SaveButton";
+import { createClient } from "@/lib/supabase/server";
 import { coverFor } from "@/lib/data/content";
 import { levelLabels } from "@/lib/types";
 import { formatDate } from "@/lib/format";
@@ -77,6 +79,7 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
         ) : (
           <Link href={`/scholarships/${s.slug}/register`} className="btn btn-gold w-full sm:w-auto">Register for this scholarship</Link>
         )}
+        <Suspense fallback={null}><SaveSlot id={s.id} slug={s.slug} /></Suspense>
         {s.provider_url && !s.provider_hidden && <a href={s.provider_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline w-full sm:w-auto">Visit provider site</a>}
       </div>
 
@@ -108,4 +111,15 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
       )}
     </article>
   );
+}
+
+async function SaveSlot({ id, slug }: { id: string; slug: string }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let saved = false;
+  if (user) {
+    const { data } = await supabase.from("saved_scholarships").select("scholarship_id").eq("user_id", user.id).eq("scholarship_id", id).maybeSingle();
+    saved = !!data;
+  }
+  return <SaveButton scholarshipId={id} slug={slug} initiallySaved={saved} className="w-full sm:w-auto" />;
 }

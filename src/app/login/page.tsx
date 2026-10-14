@@ -1,12 +1,7 @@
-import { Suspense } from "react";
-import AuthForm from "@/components/AuthForm";
+import AuthPanel from "@/components/AuthPanel";
 
-export const metadata = { title: "Log in" };
+export const metadata = { title: "Log in", robots: { index: false } };
 
 export default function Page() {
-  return (
-    <div className="px-4 py-12">
-      <Suspense><AuthForm mode="login" /></Suspense>
-    </div>
-  );
+  return <AuthPanel mode="login" />;
 }

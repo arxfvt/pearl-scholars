@@ -1,12 +1,7 @@
-import { Suspense } from "react";
-import AuthForm from "@/components/AuthForm";
+import AuthPanel from "@/components/AuthPanel";
 
-export const metadata = { title: "Register" };
+export const metadata = { title: "Register", description: "Create a free Pearl Scholars account to register for scholarships and track your progress." };
 
 export default function Page() {
-  return (
-    <div className="px-4 py-12">
-      <Suspense><AuthForm mode="signup" /></Suspense>
-    </div>
-  );
+  return <AuthPanel mode="signup" />;
 }
