@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { redirectTo } from "@/lib/redirect";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
  * (typically: link opened in a different browser, e.g. the Gmail app) we tell the student to log in instead of showing an error.
  */
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/account";
   const safe = next.startsWith("/") && !next.startsWith("//") ? next : "/account";
@@ -16,14 +16,14 @@ export async function GET(request: Request) {
   const err = searchParams.get("error_description") ?? searchParams.get("error");
   if (err) {
     const expired = /expired|invalid|otp/i.test(err);
-    return NextResponse.redirect(`${origin}/login?error=${expired || isReset ? "auth" : "google"}`);
+    return redirectTo(`/login?error=${expired || isReset ? "auth" : "google"}`);
   }
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) return NextResponse.redirect(`${origin}${safe}`);
-    return NextResponse.redirect(`${origin}/login?${isReset ? "error=auth" : `notice=confirmed&next=${encodeURIComponent(safe)}`}`);
+    if (!error) return redirectTo(`${safe}`);
+    return redirectTo(`/login?${isReset ? "error=auth" : `notice=confirmed&next=${encodeURIComponent(safe)}`}`);
   }
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  return redirectTo(`/login?error=auth`);
 }
