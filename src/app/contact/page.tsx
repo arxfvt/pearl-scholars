@@ -3,7 +3,7 @@ import { getContact } from "@/lib/data/content";
 import ContactForm from "@/components/ContactForm";
 import { BlockSkeleton } from "@/components/Skeleton";
 
-export const metadata = { title: "Contact", description: "Contact Pearl Scholars by phone, WhatsApp, email or the form." };
+export const metadata = { title: "Contact", description: "Contact Pearl Scholars by phone, WhatsApp, email or the form." , alternates: { canonical: "/contact" } };
 
 const socialLabels: Record<string, string> = { facebook: "Facebook", instagram: "Instagram", tiktok: "TikTok", x: "X", linkedin: "LinkedIn", youtube: "YouTube" };
 

@@ -7,7 +7,7 @@ import ScholarshipCard from "@/components/ScholarshipCard";
 import Pagination from "@/components/Pagination";
 import { CardGridSkeleton } from "@/components/Skeleton";
 
-export const metadata = { title: "Scholarships", description: "Browse open scholarships for O-Level, A-Level, Bachelors and Postgraduate students in Uganda and East Africa." };
+export const metadata = { title: "Scholarships", description: "Browse open scholarships for O-Level, A-Level, Bachelors and Postgraduate students in Uganda and East Africa." , alternates: { canonical: "/scholarships" } };
 
 type SP = Promise<Record<string, string | string[] | undefined>>;
 

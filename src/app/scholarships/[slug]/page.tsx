@@ -17,6 +17,30 @@ import StatusBadge from "@/components/StatusBadge";
 import Countdown from "@/components/Countdown";
 import ShareButtons from "@/components/ShareButtons";
 import { BlockSkeleton } from "@/components/Skeleton";
+import type { Metadata } from "next";
+import { createPublicClient } from "@/lib/supabase/public";
+
+const plain = (t: string | null | undefined) => (t ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+/** Per-scholarship title, description and share preview, so each listing can rank and share on its own. */
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const { data: s } = await createPublicClient().from("scholarships")
+    .select("title,summary,description,provider,provider_hidden,country,deadline,levels,amount_text")
+    .eq("slug", slug).in("status", ["published", "closed"]).maybeSingle();
+  if (!s) return { title: "Scholarship not found", robots: { index: false } };
+  const levels = (s.levels as (keyof typeof levelLabels)[]).map((l) => levelLabels[l]).join(", ");
+  const deadline = s.deadline ? ` Deadline ${formatDate(s.deadline)}.` : "";
+  const description = (plain(s.summary) || plain(s.description) || `${s.title} for ${levels} students in ${s.country}.`).slice(0, 150) + deadline;
+  const url = `/scholarships/${slug}`;
+  return {
+    title: s.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "article", url, title: s.title, description, siteName: site.name },
+    twitter: { card: "summary_large_image", title: s.title, description },
+  };
+}
 
 export default function Page({ params }: { params: Promise<{ slug: string }> }) {
   return (
@@ -57,6 +81,21 @@ async function Detail({ params }: { params: Promise<{ slug: string }> }) {
 
   return (
     <article className="mx-auto max-w-4xl px-4 pb-28 pt-6 md:py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "EducationalOccupationalProgram",
+        name: s.title,
+        description: plain(s.summary) || plain(s.description).slice(0, 300) || undefined,
+        url,
+        image: cover.startsWith("http") ? cover : `${site.url}${cover}`,
+        provider: { "@type": "Organization", name: providerLabel(s), ...(s.provider_url && !s.provider_hidden ? { url: s.provider_url } : {}) },
+        educationalProgramMode: "full-time",
+        ...(s.deadline ? { applicationDeadline: s.deadline.slice(0, 10) } : {}),
+        offers: { "@type": "Offer", price: 0, priceCurrency: "UGX", description: s.amount_text ?? "Scholarship", availability: status === "closed" ? "https://schema.org/SoldOut" : "https://schema.org/InStock" },
+        financialAidEligible: s.amount_text ?? "Scholarship",
+        audience: { "@type": "EducationalAudience", educationalRole: "student", audienceType: s.levels.map((l) => levelLabels[l]).join(", ") },
+        locationCreated: { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: s.country } },
+      }).replace(/</g, "\\u003c") }} />
       <AdminShortcut links={[{ href: `/admin/scholarships/${s.id}`, label: "Edit this scholarship" }, { href: `/admin/registrations?scholarship=${s.id}`, label: "See registered students" }]} />
       <nav aria-label="Breadcrumb" className="mb-4 text-sm"><Link href="/scholarships" className="underline">Scholarships</Link></nav>
       <div className="relative mb-6 aspect-[16/7] overflow-hidden rounded-xl bg-ink"><Image src={cover} alt="" fill sizes="(min-width:896px) 896px, 100vw" className="object-cover" priority /></div>

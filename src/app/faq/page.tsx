@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getFaq } from "@/lib/data/content";
 import { BlockSkeleton } from "@/components/Skeleton";
 
-export const metadata = { title: "FAQ", description: "Answers to common questions about Pearl Scholars." };
+export const metadata = { title: "FAQ", description: "Answers to common questions about Pearl Scholars." , alternates: { canonical: "/faq" } };
 
 export default function Page() {
   return (

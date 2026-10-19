@@ -10,6 +10,8 @@ import ScholarshipCard from "@/components/ScholarshipCard";
 import StoryCard from "@/components/StoryCard";
 import { CardGridSkeleton } from "@/components/Skeleton";
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default function Home() {
   return (
     <>

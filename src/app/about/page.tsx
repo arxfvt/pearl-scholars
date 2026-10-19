@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "About", description: "Pearl Scholars is a fair, open ground where students of every background can find genuine scholarships in Uganda and East Africa." };
+export const metadata = { title: "About", description: "Pearl Scholars is a fair, open ground where students of every background can find genuine scholarships in Uganda and East Africa." , alternates: { canonical: "/about" } };
 
 export default function Page() {
   return (

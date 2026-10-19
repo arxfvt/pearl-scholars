@@ -4,7 +4,7 @@ import StoryCard from "@/components/StoryCard";
 import AdminShortcut from "@/components/AdminShortcut";
 import { BlockSkeleton } from "@/components/Skeleton";
 
-export const metadata = { title: "Success stories", description: "Hear from students who won scholarships through Pearl Scholars." };
+export const metadata = { title: "Success stories", description: "Hear from students who won scholarships through Pearl Scholars." , alternates: { canonical: "/testimonials" } };
 
 export default function Page() {
   return (
